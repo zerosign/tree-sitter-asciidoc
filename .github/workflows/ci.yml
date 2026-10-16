@@ -26,6 +26,12 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
+      - name: setup neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+
       - name: check regenerate parser
         run: |
           pnpm generate

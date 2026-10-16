@@ -15,7 +15,8 @@
     "generate": "pnpm generate_asciidoc && pnpm generate_asciidoc_inline",
     "generate_asciidoc": "cd tree-sitter-asciidoc && pnpm generate",
     "generate_asciidoc_inline": "cd tree-sitter-asciidoc_inline && pnpm generate",
-    "test": "pnpm test_asciidoc && pnpm test_asciidoc_inline",
+    "test": "pnpm test_asciidoc && pnpm test_asciidoc_inline && pnpm test_nvim",
+    "test_nvim": "sh scripts/nvim-regex.sh",
     "test_asciidoc": "cd tree-sitter-asciidoc && pnpm test",
     "test_asciidoc_inline": "cd tree-sitter-asciidoc_inline && pnpm test"
   },

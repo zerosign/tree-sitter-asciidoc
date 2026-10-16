@@ -34,7 +34,7 @@
 ; excluded because they are injected in their declared language below.
 ((section_block
   (paragraph) @injection.content) @_block
-  (#not-match? @_block "(^|\\n)\\[\\s*source\\s*(?:[,#.%\\]])")
+  (#not-match? @_block "(^|\\n)\\[\\s*source\\s*([,#.%\\]])")
   (#set! injection.include-children)
   (#set! injection.language "asciidoc_inline"))
 
