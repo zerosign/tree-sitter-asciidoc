@@ -248,7 +248,10 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     usize counter = 0;
                     consume('-', lexer, false, &counter, USIZE_MAX);
                     lexer->mark_end(lexer);
-                    bool is_unordered_marker = is_white_space(lexer->lookahead);
+                    // A hyphen list marker is a single '-'.  A run of repeated
+                    // hyphens is a block delimiter (e.g. "----"), never a list
+                    // marker -- matches Asciidoctor's UnorderedListRx.
+                    bool is_unordered_marker = counter == 1 && is_white_space(lexer->lookahead);
                     if(valid_symbols[TOKEN_OPEN_BLOCK_MARKER]) {
                         if(lexer->get_column(lexer) == 2 && is_newline(lexer->lookahead)) {
                             lexer->result_symbol = TOKEN_OPEN_BLOCK_MARKER;
@@ -264,15 +267,27 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     }
 
                     if(valid_symbols[TOKEN_LISTING_BLOCK_START_MARKER] || valid_symbols[TOKEN_LISTING_BLOCK_END_MARKER]) {
-                        usize counter = lexer->get_column(lexer);
-                        if(counter >= 4 && is_newline(lexer->lookahead)) {
-                            if(scanner_is_matching(s, BLOCK_KIND_LISTING, counter)) {
+                        usize marker_len = lexer->get_column(lexer);
+                        bool at_line_end = is_newline(lexer->lookahead);
+                        // Asciidoctor strips trailing whitespace, so a listing
+                        // delimiter may be followed by spaces/tabs before the line
+                        // break (e.g. "---- ").  Consume that trailing whitespace
+                        // into the marker token so the block is still recognized and
+                        // its body begins on the next line, instead of falling
+                        // through to the hyphen list marker.
+                        if(marker_len >= 4 && !at_line_end && is_white_space(lexer->lookahead)) {
+                            skip_white_space(lexer);
+                            at_line_end = is_newline(lexer->lookahead) || is_eof(lexer);
+                        }
+                        if(marker_len >= 4 && at_line_end) {
+                            lexer->mark_end(lexer);
+                            if(scanner_is_matching(s, BLOCK_KIND_LISTING, marker_len)) {
                                 scanner_pop(s);
                                 lexer->result_symbol = TOKEN_LISTING_BLOCK_END_MARKER;
                                 return true;
                             } else {
                                 if(!scanner_is_matching_raw_block(s)) {
-                                    scanner_push(s, BLOCK_KIND_LISTING, counter);
+                                    scanner_push(s, BLOCK_KIND_LISTING, marker_len);
                                     lexer->result_symbol = TOKEN_LISTING_BLOCK_START_MARKER;
                                     return true;
                                 }

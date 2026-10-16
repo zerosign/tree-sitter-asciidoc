@@ -1,0 +1,46 @@
+==============================
+listing block delimiter with trailing whitespace
+==============================
+
+----   
+line of code
+----	
+
+- item one
+- item two
+
+-------------------
+
+(document
+  (block_element
+    (section_block
+      (listing_block
+        (listing_block_start_marker)
+        (listing_block_body)
+        (listing_block_end_marker))))
+  (block_element
+    (section_block
+      (list
+        (unordered_list
+          (unordered_list_item
+            (unordered_list_marker
+              (list_marker_hyphen))
+            (line))
+          (unordered_list_item
+            (unordered_list_marker
+              (list_marker_hyphen))
+            (line)))))))
+
+==============================
+repeated hyphens are not a hyphen list marker
+==============================
+
+---- text
+
+-------------------
+
+(document
+  (block_element
+    (section_block
+      (paragraph
+        (line)))))
