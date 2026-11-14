@@ -39,6 +39,7 @@ dist/
 
 docs/site
 nvim.log
+vendor/
 
 
 # Added by cargo
