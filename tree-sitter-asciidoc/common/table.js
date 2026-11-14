@@ -39,7 +39,7 @@ exports.rules = {
     prec.left(
       seq(
         $.table_block_marker,
-        repeat(choice($.table_cell, $.ntable_block)),
+        repeat(choice($.table_cell, $.ntable_block, $.block_macro)),
         $.table_block_marker,
       ),
     ),

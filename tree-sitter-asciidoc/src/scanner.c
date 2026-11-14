@@ -47,6 +47,8 @@ void tree_sitter_asciidoc_external_scanner_deserialize(void *payload, const char
     scanner_deserialize(s, &qb);
 }
 
+static inline bool parse_table_attr(TSLexer *lexer, bool *is_asciidoc);
+
 bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     Scanner *s = (Scanner *)payload;
 
@@ -124,13 +126,19 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
         }
 
         if(is_alpha_lower && !scanner_is_matching_raw_block(s)) {
-            if(valid_symbols[TOKEN_BLOCK_MACRO_NAME] || valid_symbols[TOKEN_TERM]) {
+            if(valid_symbols[TOKEN_BLOCK_MACRO_NAME] || valid_symbols[TOKEN_TERM] || valid_symbols[TOKEN_CELL_ATTR] || valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR]) {
+                bool is_asciidoc = false;
                 while(is_ascii_alpha_lower(lexer->lookahead)) {
+                    if(lexer->lookahead == 'a') {
+                        is_asciidoc = true;
+                    }
                     lexer->advance(lexer, false);
                 }
-                lexer->mark_end(lexer);
+                while(parse_table_attr(lexer, &is_asciidoc)) {
+                }
                 i32 c = lexer->lookahead;
                 if(c == ':' || c == ';') {
+                    lexer->mark_end(lexer);
                     usize run = 0;
                     while(lexer->lookahead == c) {
                         lexer->advance(lexer, false);
@@ -150,6 +158,16 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                         lexer->result_symbol = TOKEN_BLOCK_MACRO_NAME;
                         return true;
                     }
+                } else if(c == '|' || c == '!' || c == 0x00A6) {
+                    if(is_asciidoc && valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR]) {
+                        lexer->result_symbol = TOKEN_ASCIIDOC_CELL_ATTR;
+                        lexer->mark_end(lexer);
+                        return true;
+                    } else if(valid_symbols[TOKEN_CELL_ATTR]) {
+                        lexer->result_symbol = TOKEN_CELL_ATTR;
+                        lexer->mark_end(lexer);
+                        return true;
+                    }
                 }
             }
         }
@@ -158,17 +176,24 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
             switch(lexer->lookahead) {
                 case '=': {
                     consume('=', lexer, false, NULL, USIZE_MAX);
+                    usize counter = lexer->get_column(lexer);
                     lexer->mark_end(lexer);
                     if(valid_symbols[TOKEN_SETEXT_TITLE_H0_MARKER]) {
-                        usize counter = lexer->get_column(lexer);
                         if(counter >= 5 && (is_new_line(lexer->lookahead) || is_eof(lexer))) {
                             lexer->result_symbol = TOKEN_SETEXT_TITLE_H0_MARKER;
                             return true;
                         }
                     }
                     if(!scanner_is_matching_raw_block(s)) {
-                        usize counter = lexer->get_column(lexer);
-                        if(counter >= 4 && (is_new_line(lexer->lookahead) || is_eof(lexer))) {
+                        bool at_line_end = is_new_line(lexer->lookahead) || is_eof(lexer);
+                        if(counter >= 4 && !at_line_end && is_white_space(lexer->lookahead)) {
+                            skip_white_space(lexer);
+                            at_line_end = is_new_line(lexer->lookahead) || is_eof(lexer);
+                            if(at_line_end) {
+                                lexer->mark_end(lexer);
+                            }
+                        }
+                        if(counter >= 4 && at_line_end) {
                             if(scanner_is_matching(s, BLOCK_KIND_DELIMITED, counter)) {
                                 if(valid_symbols[TOKEN_DELIMITED_BLOCK_END_MARKER]) {
                                     lexer->result_symbol = TOKEN_DELIMITED_BLOCK_END_MARKER;
@@ -183,11 +208,9 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                                 }
                             }
                         }
-                    }
 
-                    if(!scanner_is_matching_raw_block(s)) {
-                        usize level = TOKEN_TITLE_H0_MARKER - 1 + lexer->get_column(lexer);
-                        if(level <= TOKEN_TITLE_H5_MARKER && is_white_space(lexer->lookahead)) {
+                        usize level = TOKEN_TITLE_H0_MARKER - 1 + counter;
+                        if(level <= TOKEN_TITLE_H5_MARKER && !at_line_end) {
                             lexer->result_symbol = level;
                             return true;
                         }
@@ -388,6 +411,29 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                             lexer->mark_end(lexer);
                             lexer->result_symbol = TOKEN_LIST_MARKER_DOT;
                             return true;
+                        }
+                    }
+
+                    if(lexer->get_column(lexer) == 1 && (valid_symbols[TOKEN_CELL_ATTR] || valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR])) {
+                        if(is_ascii_digit(lexer->lookahead)) {
+                            parse_number(lexer);
+                            if(lexer->lookahead == '+') {
+                                lexer->advance(lexer, false);
+                                bool is_asciidoc = false;
+                                while(parse_table_attr(lexer, &is_asciidoc)) {
+                                }
+                                if(lexer->lookahead == '|' || lexer->lookahead == '!' || lexer->lookahead == 0x00A6) {
+                                    if(is_asciidoc && valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR]) {
+                                        lexer->result_symbol = TOKEN_ASCIIDOC_CELL_ATTR;
+                                    } else if(valid_symbols[TOKEN_CELL_ATTR]) {
+                                        lexer->result_symbol = TOKEN_CELL_ATTR;
+                                    } else {
+                                        return false;
+                                    }
+                                    lexer->mark_end(lexer);
+                                    return true;
+                                }
+                            }
                         }
                     }
 
