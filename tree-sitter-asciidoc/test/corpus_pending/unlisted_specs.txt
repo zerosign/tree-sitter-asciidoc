@@ -479,3 +479,28 @@ Example content.
           (paragraph
             (line)))
         (delimited_block_end_marker)))))
+
+==================================================
+Standalone pipe character in paragraph text
+==================================================
+
+Line one
+|
+Line two
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (paragraph
+        (line))))
+  (block_element
+    (section_block
+      (paragraph
+        (line))))
+  (block_element
+    (section_block
+      (paragraph
+        (line)))))
+
