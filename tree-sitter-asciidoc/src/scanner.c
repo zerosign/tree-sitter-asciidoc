@@ -64,7 +64,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
             return false;
         }
         if(parse_sequence(lexer, "////")) {
-            if(is_newline(lexer->lookahead)) {
+            if(is_newline(lexer->lookahead) || is_eof(lexer)) {
                 lexer->result_symbol = TOKEN_BLOCK_COMMENT_END_MARKER;
                 return true;
             }
@@ -253,7 +253,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     // marker -- matches Asciidoctor's UnorderedListRx.
                     bool is_unordered_marker = counter == 1 && is_white_space(lexer->lookahead);
                     if(valid_symbols[TOKEN_OPEN_BLOCK_MARKER]) {
-                        if(lexer->get_column(lexer) == 2 && is_newline(lexer->lookahead)) {
+                        if(lexer->get_column(lexer) == 2 && (is_newline(lexer->lookahead) || is_eof(lexer))) {
                             lexer->result_symbol = TOKEN_OPEN_BLOCK_MARKER;
                             return true;
                         }
@@ -268,7 +268,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
 
                     if(valid_symbols[TOKEN_LISTING_BLOCK_START_MARKER] || valid_symbols[TOKEN_LISTING_BLOCK_END_MARKER]) {
                         usize marker_len = lexer->get_column(lexer);
-                        bool at_line_end = is_newline(lexer->lookahead);
+                        bool at_line_end = is_newline(lexer->lookahead) || is_eof(lexer);
                         // Asciidoctor strips trailing whitespace, so a listing
                         // delimiter may be followed by spaces/tabs before the line
                         // break (e.g. "---- ").  Consume that trailing whitespace
@@ -358,7 +358,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     lexer->mark_end(lexer);
                     if(valid_symbols[TOKEN_LITERAL_BLOCK_MARKER]) {
                         usize counter = lexer->get_column(lexer);
-                        if(counter >= 4 && is_newline(lexer->lookahead)) {
+                        if(counter >= 4 && (is_newline(lexer->lookahead) || is_eof(lexer))) {
                             if(scanner_is_matching(s, BLOCK_KIND_LITERAL, counter)) {
                                 scanner_pop(s);
                                 lexer->result_symbol = TOKEN_LITERAL_BLOCK_MARKER;
@@ -401,7 +401,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                             lexer->advance(lexer, false);
                             ++counter;
                         }
-                        if(counter >= 3 && is_newline(lexer->lookahead)) {
+                        if(counter >= 3 && (is_newline(lexer->lookahead) || is_eof(lexer))) {
                             if(scanner_is_matching(s, BLOCK_KIND_DSV_TABLE, 0)) {
                                 if(scanner_is_matching(s, BLOCK_KIND_DSV_TABLE, counter)) {
                                     lexer->mark_end(lexer);
@@ -482,7 +482,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                         lexer->advance(lexer, false);
                         usize counter = 0;
                         consume('=', lexer, false, &counter, USIZE_MAX);
-                        if(counter >= 3 && is_newline(lexer->lookahead)) {
+                        if(counter >= 3 && (is_newline(lexer->lookahead) || is_eof(lexer))) {
                             if(scanner_is_matching(s, BLOCK_KIND_CSV_TABLE, 0)) {
                                 if(scanner_is_matching(s, BLOCK_KIND_CSV_TABLE, counter)) {
                                     lexer->mark_end(lexer);
@@ -505,7 +505,10 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                         lexer->advance(lexer, false);
                         usize counter = 0;
                         consume('=', lexer, false, &counter, USIZE_MAX);
-                        if(counter >= 3 && is_newline(lexer->lookahead)) {
+                        if(counter >= 3 && is_white_space(lexer->lookahead)) {
+                            skip_white_space(lexer);
+                        }
+                        if(counter >= 3 && (is_newline(lexer->lookahead) || is_eof(lexer))) {
                             if(scanner_is_matching(s, BLOCK_KIND_TABLE, 0)) {
                                 if(scanner_is_matching(s, BLOCK_KIND_TABLE, counter)) {
                                     lexer->mark_end(lexer);
@@ -527,7 +530,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     if(valid_symbols[TOKEN_NTABLE_BLOCK_MARKER]) {
                         lexer->advance(lexer, false);
                         consume('=', lexer, false, NULL, USIZE_MAX);
-                        if(is_newline(lexer->lookahead)) {
+                        if(is_newline(lexer->lookahead) || is_eof(lexer)) {
                             lexer->mark_end(lexer);
                             lexer->result_symbol = TOKEN_NTABLE_BLOCK_MARKER;
                             return true;
@@ -542,7 +545,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                             lexer->mark_end(lexer);
                             if(valid_symbols[TOKEN_BLOCK_COMMENT_START_MARKER]) {
                                 if(parse_sequence(lexer, "//")) {
-                                    if(is_newline(lexer->lookahead)) {
+                                    if(is_newline(lexer->lookahead) || is_eof(lexer)) {
                                         lexer->result_symbol = TOKEN_BLOCK_COMMENT_START_MARKER;
                                         lexer->mark_end(lexer);
                                         return true;
