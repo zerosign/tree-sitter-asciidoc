@@ -1125,47 +1125,20 @@
                   }
                 },
                 {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "ALIAS",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_section_block"
-                          },
-                          "named": true,
-                          "value": "section_block"
-                        },
-                        {
-                          "type": "REPEAT",
-                          "content": {
-                            "type": "SEQ",
-                            "members": [
-                              {
-                                "type": "SYMBOL",
-                                "name": "list_continuation"
-                              },
-                              {
-                                "type": "ALIAS",
-                                "content": {
-                                  "type": "SYMBOL",
-                                  "name": "_section_block"
-                                },
-                                "named": true,
-                                "value": "section_block"
-                              }
-                            ]
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "section_block"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "list_continuation"
+                      }
+                    ]
+                  }
                 }
               ]
             },
@@ -3163,8 +3136,28 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "[^\\r\\n]+"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[^|¦\\r\\n]"
+            },
+            {
+              "type": "STRING",
+              "value": "\\|"
+            },
+            {
+              "type": "STRING",
+              "value": "\\¦"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\r\\n]"
+          }
         },
         {
           "type": "SYMBOL",
