@@ -251,7 +251,7 @@ module.exports = grammar({
       ),
     _shorthand: $ =>
       choice(
-        seq('#', alias($._attr_word, $.id)),
+        seq('#', alias($._id_word, $.id)),
         seq('.', alias($._attr_word, $.role)),
         seq('%', alias($._attr_word, $.option)),
       ),
@@ -279,6 +279,7 @@ module.exports = grammar({
       seq($._value_token_eq, repeat(seq(optional($._WHITE_SPACE), $._value_token_eq))),
     _value_token: $ => choice($._attr_word, '#', '.', '%'),
     _value_token_eq: $ => choice($._attr_word, '#', '.', '%', '='),
+    _id_word: _ => token(/[^,=#.%\]"'\r\n]+/),
     _attr_word: _ => token(/[^,=#.%\]"'\s]+/),
     block_title: $ => seq($.block_title_marker, $.line),
 
