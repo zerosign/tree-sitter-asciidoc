@@ -504,3 +504,35 @@ Line two
       (paragraph
         (line)))))
 
+==================================================
+Document attribute after block title in section
+==================================================
+
+== Section
+
+.Title
+:attr: value
+include::target.adoc[]
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section
+      (title1
+        (title_h1_marker)
+        (line))
+      (section_block
+        (block_title
+          (block_title_marker)
+          (line))
+        (document_attr
+          (document_attr_marker)
+          (attr_name)
+          (document_attr_marker)
+          (line))
+        (block_macro
+          (block_macro_name)
+          (target))))))
+
+
