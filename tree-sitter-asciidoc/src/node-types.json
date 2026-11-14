@@ -494,6 +494,10 @@
           "named": true
         },
         {
+          "type": "block_comment",
+          "named": true
+        },
+        {
           "type": "block_macro",
           "named": true
         },
@@ -503,6 +507,10 @@
         },
         {
           "type": "line",
+          "named": true
+        },
+        {
+          "type": "line_comment",
           "named": true
         },
         {
@@ -572,6 +580,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "email",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "firstname",
@@ -1346,6 +1359,11 @@
     "fields": {}
   },
   {
+    "type": "term",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "title1",
     "named": true,
     "fields": {},
@@ -1611,6 +1629,10 @@
     "named": false
   },
   {
+    "type": "\\¦",
+    "named": false
+  },
+  {
     "type": "]",
     "named": false
   },
@@ -1700,10 +1722,6 @@
   },
   {
     "type": "element_attr_marker",
-    "named": true
-  },
-  {
-    "type": "email",
     "named": true
   },
   {
@@ -1815,10 +1833,6 @@
     "named": true
   },
   {
-    "type": "term",
-    "named": true
-  },
-  {
     "type": "title_h0_marker",
     "named": true
   },
@@ -1844,6 +1858,10 @@
   },
   {
     "type": "|",
+    "named": false
+  },
+  {
+    "type": "¦",
     "named": false
   }
 ]
