@@ -49,18 +49,18 @@ exports.rules = {
         optional($.table_cell_attr),
         choice(
           seq(
-            '|',
+            choice('|', '¦'),
             token.immediate(/\r?\n/),
             anySep(
               alias($._section_block, $.section_block),
               $.list_continuation,
             ),
           ),
-          seq('|', $.table_cell_content),
+          seq(choice('|', '¦'), $.table_cell_content),
         ),
       ),
     ),
-  table_cell_content: $ => repeat1(choice(/[^|]/, '\\|')),
+  table_cell_content: $ => repeat1(choice(/[^|¦]/, '\\|', '\\¦')),
 
   ntable_block: $ =>
     prec.left(

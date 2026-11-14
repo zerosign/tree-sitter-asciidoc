@@ -722,7 +722,7 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
         }
 
         if(has_token) {
-            if(lexer->lookahead == '|' || lexer->lookahead == '!') {
+            if(lexer->lookahead == '|' || lexer->lookahead == '!' || lexer->lookahead == 0x00A6) {
                 lexer->result_symbol = TOKEN_CELL_ATTR;
                 lexer->mark_end(lexer);
                 return true;
