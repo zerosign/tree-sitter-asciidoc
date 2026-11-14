@@ -55,10 +55,11 @@ typedef enum TokenType {
     TOKEN_DSV_TABLE_BLOCK_MARKER,
     TOKEN_TERM,
     TOKEN_DESCRIPTION_MARKER,
-    TOKEN_SETEXT_TITLE_H0_MARKER
+    TOKEN_SETEXT_TITLE_H0_MARKER,
+    TOKEN_ASCIIDOC_CELL_ATTR
 } TokenType;
 
-static inline bool parse_table_attr(TSLexer *lexer);
+static inline bool parse_table_attr(TSLexer *lexer, bool *is_asciidoc);
 static inline bool parse_number(TSLexer *lexer);
 static inline bool parse_sequence_impl(TSLexer *lexer, char const *sequence, usize len);
 #define parse_sequence(lexer, sequence) parse_sequence_impl(lexer, sequence, sizeof(sequence) - 1)

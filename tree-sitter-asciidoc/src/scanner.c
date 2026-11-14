@@ -168,15 +168,20 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                     }
                     if(!scanner_is_matching_raw_block(s)) {
                         usize counter = lexer->get_column(lexer);
-                        if(counter >= 4 && is_new_line(lexer->lookahead)) {
+                        if(counter >= 4 && (is_new_line(lexer->lookahead) || is_eof(lexer))) {
                             if(scanner_is_matching(s, BLOCK_KIND_DELIMITED, counter)) {
-                                lexer->result_symbol = TOKEN_DELIMITED_BLOCK_END_MARKER;
-                                scanner_pop(s);
+                                if(valid_symbols[TOKEN_DELIMITED_BLOCK_END_MARKER]) {
+                                    lexer->result_symbol = TOKEN_DELIMITED_BLOCK_END_MARKER;
+                                    scanner_pop(s);
+                                    return true;
+                                }
                             } else {
-                                scanner_push(s, BLOCK_KIND_DELIMITED, counter);
-                                lexer->result_symbol = TOKEN_DELIMITED_BLOCK_START_MARKER;
+                                if(valid_symbols[TOKEN_DELIMITED_BLOCK_START_MARKER]) {
+                                    scanner_push(s, BLOCK_KIND_DELIMITED, counter);
+                                    lexer->result_symbol = TOKEN_DELIMITED_BLOCK_START_MARKER;
+                                    return true;
+                                }
                             }
-                            return true;
                         }
                     }
 
@@ -724,16 +729,23 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
 
     if(
         start_pos == lexer->get_column(lexer) &&
-        valid_symbols[TOKEN_CELL_ATTR]
+        (valid_symbols[TOKEN_CELL_ATTR] || valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR])
     ) {
         bool has_token = false;
-        while(parse_table_attr(lexer)) {
+        bool is_asciidoc = false;
+        while(parse_table_attr(lexer, &is_asciidoc)) {
             has_token = true;
         }
 
         if(has_token) {
             if(lexer->lookahead == '|' || lexer->lookahead == '!' || lexer->lookahead == 0x00A6) {
-                lexer->result_symbol = TOKEN_CELL_ATTR;
+                if(is_asciidoc && valid_symbols[TOKEN_ASCIIDOC_CELL_ATTR]) {
+                    lexer->result_symbol = TOKEN_ASCIIDOC_CELL_ATTR;
+                } else if(valid_symbols[TOKEN_CELL_ATTR]) {
+                    lexer->result_symbol = TOKEN_CELL_ATTR;
+                } else {
+                    return false;
+                }
                 lexer->mark_end(lexer);
                 return true;
             }
@@ -885,7 +897,14 @@ char table_cell_attr_style_header = 'h';
 char table_cell_attr_style_literal = 'l';
 char table_cell_attr_style_asciidoc = 'a';
 
-static inline bool parse_table_attr(TSLexer *lexer) {
+static inline bool parse_table_attr(TSLexer *lexer, bool *is_asciidoc) {
+    if(lexer->lookahead == table_cell_attr_style_asciidoc) {
+        if(is_asciidoc) {
+            *is_asciidoc = true;
+        }
+        lexer->advance(lexer, false);
+        return true;
+    }
     if(lexer->lookahead == table_cell_attr_align_left ||
        lexer->lookahead == table_cell_attr_align_right ||
        lexer->lookahead == table_cell_attr_align_middle ||
@@ -894,18 +913,24 @@ static inline bool parse_table_attr(TSLexer *lexer) {
        lexer->lookahead == table_cell_attr_style_emphasis ||
        lexer->lookahead == table_cell_attr_style_monospaced ||
        lexer->lookahead == table_cell_attr_style_header ||
-       lexer->lookahead == table_cell_attr_style_literal ||
-       lexer->lookahead == table_cell_attr_style_asciidoc) {
+       lexer->lookahead == table_cell_attr_style_literal) {
         lexer->advance(lexer, false);
         return true;
     }
     // table_cell_span_vertical = /\.\d+\+/;
     if(lexer->lookahead == '.') {
         lexer->advance(lexer, false);
-        return parse_number(lexer);
+        if(parse_number(lexer)) {
+            if(lexer->lookahead == '+') {
+                lexer->advance(lexer, false);
+                return true;
+            }
+        }
+        return false;
     }
     // table_cell_span_width = /\d+\+/;
     // table_cell_span_vw = /\d+\.\d+\+/;
+    // table_cell_repeat = /\d+\*/;
     if(parse_number(lexer)) {
         if(lexer->lookahead == '.') {
             lexer->advance(lexer, false);
@@ -913,7 +938,7 @@ static inline bool parse_table_attr(TSLexer *lexer) {
                 return false;
             }
         }
-        if(lexer->lookahead == '+') {
+        if(lexer->lookahead == '+' || lexer->lookahead == '*') {
             lexer->advance(lexer, false);
             return true;
         }

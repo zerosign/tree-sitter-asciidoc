@@ -44,15 +44,22 @@ exports.rules = {
       ),
     ),
   table_cell: $ =>
-    seq(
-      optional($.table_cell_attr),
-      choice(
-        seq(
-          choice('|', '¦'),
-          token.immediate(/\r?\n/),
-          repeat(choice($.section_block, $.list_continuation)),
+    choice(
+      seq(
+        alias($.asciidoc_cell_attr, $.table_cell_attr),
+        choice('|', '¦'),
+        repeat(choice($.section_block, $.list_continuation)),
+      ),
+      seq(
+        optional($.table_cell_attr),
+        choice(
+          seq(
+            choice('|', '¦'),
+            token.immediate(/\r?\n/),
+            repeat(choice($.section_block, $.list_continuation)),
+          ),
+          seq(choice('|', '¦'), optional($.table_cell_content)),
         ),
-        seq(choice('|', '¦'), $.table_cell_content),
       ),
     ),
   table_cell_content: $ => repeat1(choice(/[^|¦]/, '\\|', '\\¦')),

@@ -43,13 +43,31 @@ a|info 8
           (table_cell_content))
         (table_cell
           (table_cell_attr)
-          (table_cell_content))
-        (table_cell
-          (table_cell_attr)
-          (table_cell_content))
-        (table_cell
-          (table_cell_attr)
-          (table_cell_content))
+          (section_block
+            (paragraph
+              (line)))
+          (section_block
+            (list
+              (unordered_list
+                (unordered_list_item
+                  (unordered_list_marker
+                    (list_marker_star))
+                  (line))
+                (unordered_list_item
+                  (unordered_list_marker
+                    (list_marker_star))
+                  (line))
+                (unordered_list_item
+                  (unordered_list_marker
+                    (list_marker_hyphen))
+                  (line))
+                (unordered_list_item
+                  (unordered_list_marker
+                    (list_marker_hyphen))
+                  (line)))))
+          (section_block
+            (paragraph
+              (line))))
         (ntable_block
           (ntable_block_marker)
           (ntable_cell)
@@ -72,11 +90,21 @@ a|info 8
           (ntable_block_marker))
         (table_cell
           (table_cell_attr)
-          (table_cell_content))
-        (table_cell
-          (table_cell_attr)
-          (table_cell_content))
-        (table_cell
-          (table_cell_attr)
-          (table_cell_content))
+          (section_block
+            (paragraph
+              (line)))
+          (section_block
+            (list
+              (ordered_list
+                (ordered_list_item
+                  (ordered_list_marker
+                    (list_marker_dot))
+                  (line))
+                (ordered_list_item
+                  (ordered_list_marker
+                    (list_marker_dot))
+                  (line)))))
+          (section_block
+            (paragraph
+              (line))))
         (table_block_marker)))))

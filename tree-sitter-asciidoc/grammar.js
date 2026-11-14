@@ -451,5 +451,6 @@ module.exports = grammar({
     $.term,
     $.description_marker,
     $.setext_title_h0_marker,
+    $.asciidoc_cell_attr,
   ],
 });
