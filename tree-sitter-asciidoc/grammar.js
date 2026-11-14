@@ -354,8 +354,7 @@ module.exports = grammar({
 
     line: $ =>
       seq(
-        choice(/[^|¦\r\n]/, '\\|', '\\¦'),
-        repeat(/[^\r\n]/),
+        repeat1(/[^\r\n]/),
         $._block_end,
       ),
     paragraph: $ =>
