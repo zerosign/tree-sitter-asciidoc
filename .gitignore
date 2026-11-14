@@ -38,6 +38,7 @@ dist/
 *.o
 
 docs/site
+nvim.log
 
 
 # Added by cargo

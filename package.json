@@ -3,22 +3,18 @@
   "version": "0.0.1",
   "private": true,
   "license": "Apache-2.0",
-  "packageManager": "pnpm@11.4.0",
   "workspaces": [
     "./tree-sitter-asciidoc",
     "./tree-sitter-asciidoc_inline"
   ],
-  "engines": {
-    "node": ">=v20.12.2"
-  },
   "scripts": {
-    "generate": "pnpm generate_asciidoc && pnpm generate_asciidoc_inline",
-    "generate_asciidoc": "cd tree-sitter-asciidoc && pnpm generate",
-    "generate_asciidoc_inline": "cd tree-sitter-asciidoc_inline && pnpm generate",
-    "test": "pnpm test_asciidoc && pnpm test_asciidoc_inline && pnpm test_nvim",
+    "generate": "bun run generate_asciidoc && bun run generate_asciidoc_inline",
+    "generate_asciidoc": "cd tree-sitter-asciidoc && bun run generate",
+    "generate_asciidoc_inline": "cd tree-sitter-asciidoc_inline && bun run generate",
+    "test": "bun run test_asciidoc && bun run test_asciidoc_inline && bun run test_nvim",
     "test_nvim": "sh scripts/nvim-regex.sh",
-    "test_asciidoc": "cd tree-sitter-asciidoc && pnpm test",
-    "test_asciidoc_inline": "cd tree-sitter-asciidoc_inline && pnpm test"
+    "test_asciidoc": "cd tree-sitter-asciidoc && bun run test",
+    "test_asciidoc_inline": "cd tree-sitter-asciidoc_inline && bun run test"
   },
   "devDependencies": {
     "tree-sitter-cli": "^0.25.10"
