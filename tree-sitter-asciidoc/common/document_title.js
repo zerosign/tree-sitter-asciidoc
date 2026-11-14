@@ -4,9 +4,10 @@ exports.rules = {
   document_title: $ =>
     seq(
       optional($._block_attrs),
-      $.title_h0_marker,
-      $._WHITE_SPACE,
-      $.line,
+      choice(
+        seq($.title_h0_marker, $._WHITE_SPACE, $.line),
+        seq($.line, alias($.setext_title_h0_marker, $.title_h0_marker)),
+      ),
       optional(seq($.author_line, seq($._NEWLINE, optional($.revision_line)))),
       repeat(choice($.document_attr, $.block_macro, $.line_comment, $.block_comment)),
       $._block_end,

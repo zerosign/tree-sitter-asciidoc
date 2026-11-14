@@ -449,5 +449,6 @@ module.exports = grammar({
     $.dsv_table_block_marker,
     $.term,
     $.description_marker,
+    $.setext_title_h0_marker,
   ],
 });

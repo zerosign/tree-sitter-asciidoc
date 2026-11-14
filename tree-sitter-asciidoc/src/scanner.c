@@ -159,6 +159,13 @@ bool tree_sitter_asciidoc_external_scanner_scan(void *payload, TSLexer *lexer, c
                 case '=': {
                     consume('=', lexer, false, NULL, USIZE_MAX);
                     lexer->mark_end(lexer);
+                    if(valid_symbols[TOKEN_SETEXT_TITLE_H0_MARKER]) {
+                        usize counter = lexer->get_column(lexer);
+                        if(counter >= 5 && (is_new_line(lexer->lookahead) || is_eof(lexer))) {
+                            lexer->result_symbol = TOKEN_SETEXT_TITLE_H0_MARKER;
+                            return true;
+                        }
+                    }
                     if(!scanner_is_matching_raw_block(s)) {
                         usize counter = lexer->get_column(lexer);
                         if(counter >= 4 && is_new_line(lexer->lookahead)) {
