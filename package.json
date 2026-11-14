@@ -12,6 +12,7 @@
     "generate_asciidoc": "cd tree-sitter-asciidoc && bun run generate",
     "generate_asciidoc_inline": "cd tree-sitter-asciidoc_inline && bun run generate",
     "test": "bun run test_asciidoc && bun run test_asciidoc_inline && bun run test_nvim",
+    "test_pending": "sh scripts/test-pending.sh",
     "test_nvim": "sh scripts/nvim-regex.sh",
     "test_asciidoc": "cd tree-sitter-asciidoc && bun run test",
     "test_asciidoc_inline": "cd tree-sitter-asciidoc_inline && bun run test"
