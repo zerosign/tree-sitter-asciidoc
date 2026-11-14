@@ -13,7 +13,15 @@ module.exports = grammar({
 
   extras: $ => [$._NEWLINE],
 
-  conflicts: $ => [[$._value_run], [$._value_run_eq]],
+  conflicts: $ => [
+    [$._value_run],
+    [$._value_run_eq],
+    [$._section1],
+    [$._section2],
+    [$._section3],
+    [$._section4],
+    [$._section5],
+  ],
 
   rules: {
     document: $ => repeat($.block_element),
@@ -42,74 +50,64 @@ module.exports = grammar({
     // illegal level skip (e.g. `==` straight to `====`) still nests instead of
     // erroring; the innermost open section greedily claims a deeper heading.
     _section1: $ =>
-      prec.right(
-        seq(
-          optional($._block_attrs),
-          $.title1,
-          repeat(
-            choice(
-              $._section_comment,
-              alias($._doc_block, $.section_block),
-              alias($._section2, $.section),
-              alias($._section3, $.section),
-              alias($._section4, $.section),
-              alias($._section5, $.section),
-            ),
+      seq(
+        optional($._block_attrs),
+        $.title1,
+        repeat(
+          choice(
+            $._section_comment,
+            alias($._doc_block, $.section_block),
+            alias($._section2, $.section),
+            alias($._section3, $.section),
+            alias($._section4, $.section),
+            alias($._section5, $.section),
           ),
         ),
       ),
     _section2: $ =>
-      prec.right(
-        seq(
-          optional($._block_attrs),
-          $.title2,
-          repeat(
-            choice(
-              $._section_comment,
-              alias($._doc_block, $.section_block),
-              alias($._section3, $.section),
-              alias($._section4, $.section),
-              alias($._section5, $.section),
-            ),
+      seq(
+        optional($._block_attrs),
+        $.title2,
+        repeat(
+          choice(
+            $._section_comment,
+            alias($._doc_block, $.section_block),
+            alias($._section3, $.section),
+            alias($._section4, $.section),
+            alias($._section5, $.section),
           ),
         ),
       ),
     _section3: $ =>
-      prec.right(
-        seq(
-          optional($._block_attrs),
-          $.title3,
-          repeat(
-            choice(
-              $._section_comment,
-              alias($._doc_block, $.section_block),
-              alias($._section4, $.section),
-              alias($._section5, $.section),
-            ),
+      seq(
+        optional($._block_attrs),
+        $.title3,
+        repeat(
+          choice(
+            $._section_comment,
+            alias($._doc_block, $.section_block),
+            alias($._section4, $.section),
+            alias($._section5, $.section),
           ),
         ),
       ),
     _section4: $ =>
-      prec.right(
-        seq(
-          optional($._block_attrs),
-          $.title4,
-          repeat(
-            choice(
-              $._section_comment,
-              alias($._doc_block, $.section_block),
-              alias($._section5, $.section),
-            ),
+      seq(
+        optional($._block_attrs),
+        $.title4,
+        repeat(
+          choice(
+            $._section_comment,
+            alias($._doc_block, $.section_block),
+            alias($._section5, $.section),
           ),
         ),
       ),
     _section5: $ =>
-      prec.right(
-        seq(
-          optional($._block_attrs),
-          $.title5,
-          repeat(choice($._section_comment, alias($._doc_block, $.section_block))),
-        ),
+      seq(
+        optional($._block_attrs),
+        $.title5,
+        repeat(choice($._section_comment, alias($._doc_block, $.section_block))),
       ),
 
     _section_comment: $ => choice($.line_comment, $.block_comment),
@@ -168,11 +166,18 @@ module.exports = grammar({
     description_list_item: $ =>
       prec.right(
         seq(
-          $.term,
+          choice(
+            $.term,
+            alias($._colon_term, $.term),
+          ),
           $.description_marker,
           optional($.line),
         ),
       ),
+    _colon_term: $ => seq(
+      alias($.document_attr_marker, ':'),
+      repeat1(escaped_ch(':', true)),
+    ),
 
     title1: $ => seq($.title_h1_marker, $._WHITE_SPACE, $.line),
     title2: $ => seq($.title_h2_marker, $._WHITE_SPACE, $.line),
