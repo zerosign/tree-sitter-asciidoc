@@ -205,3 +205,169 @@ Custom table cell separator
         (table_cell
           (table_cell_content))
         (table_block_marker)))))
+
+==================================================
+Anchor or block attributes before document title
+==================================================
+
+[#doc-id]
+= Document Title
+
+Content.
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (document_title
+      (element_attr
+        (element_attr_marker)
+        (positional_attr
+          (id))
+        (element_attr_marker))
+      (title_h0_marker)
+      (line)))
+  (block_element
+    (section_block
+      (paragraph
+        (line)))))
+
+==================================================
+Listing block delimiter at EOF without newline
+==================================================
+
+----
+echo hello
+----
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (listing_block
+        (listing_block_start_marker)
+        (listing_block_body)
+        (listing_block_end_marker)))))
+
+==================================================
+Table block delimiter with trailing space
+==================================================
+
+[cols="1,1"]
+|==== 
+| Cell 1 | Cell 2
+|====
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (element_attr
+        (element_attr_marker)
+        (named_attr
+          (attribute_name)
+          (attribute_value
+            (value)))
+        (element_attr_marker))
+      (table_block
+        (table_block_marker)
+        (table_cell
+          (table_cell_content))
+        (table_cell
+          (table_cell_content))
+        (table_block_marker)))))
+
+==================================================
+Empty table cell before row break or table end
+==================================================
+
+|===
+| Warning
+|
+|===
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (table_block
+        (table_block_marker)
+        (table_cell
+          (table_cell_content))
+        (table_cell)
+        (table_block_marker)))))
+
+==================================================
+Standalone partial starting with section 2 heading
+==================================================
+
+=== Subsection Title
+
+Some text.
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section
+      (title2
+        (title_h2_marker)
+        (line))
+      (section_block
+        (paragraph
+          (line))))))
+
+==================================================
+AsciiDoc style cell with multiple paragraphs
+==================================================
+
+|===
+a|
+First paragraph.
+
+Second paragraph.
+| Next cell
+|===
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (table_block
+        (table_block_marker)
+        (table_cell
+          (table_cell_attr)
+          (section_block
+            (paragraph
+              (line)))
+          (section_block
+            (paragraph
+              (line))))
+        (table_cell
+          (table_cell_content))
+        (table_block_marker)))))
+
+==================================================
+Setext style document title
+==================================================
+
+Document Title
+==============
+
+Content.
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (document_title
+      (line)
+      (title_h0_marker)))
+  (block_element
+    (section_block
+      (paragraph
+        (line)))))

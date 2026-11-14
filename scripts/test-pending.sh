@@ -16,7 +16,7 @@ corpus_path = "tree-sitter-asciidoc/test/corpus_pending/unlisted_specs.txt"
 with open(corpus_path, "r", encoding="utf-8") as f:
     raw = f.read()
 
-pattern = r'=+\n(.*?)\n=+\n(.*?)\n-+\n(.*?)(?=\n=+|\Z)'
+pattern = r'={10,}\n(.*?)\n={10,}\n(.*?)\n-{10,}\n(.*?)(?=\n={10,}|\Z)'
 matches = re.findall(pattern, raw, re.DOTALL)
 
 def normalize_cst(s):
