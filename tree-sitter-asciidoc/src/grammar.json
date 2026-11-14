@@ -1319,8 +1319,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "table_cell_attr"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "ntable_cell_attr"
+              },
+              "named": true,
+              "value": "table_cell_attr"
             },
             {
               "type": "BLANK"
@@ -3731,6 +3736,10 @@
     {
       "type": "SYMBOL",
       "name": "asciidoc_cell_attr"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "ntable_cell_attr"
     }
   ],
   "inline": [],
