@@ -44,20 +44,18 @@ exports.rules = {
       ),
     ),
   table_cell: $ =>
-    prec.right(
-      seq(
-        optional($.table_cell_attr),
-        choice(
-          seq(
-            choice('|', '¦'),
-            token.immediate(/\r?\n/),
-            anySep(
-              alias($._section_block, $.section_block),
-              $.list_continuation,
-            ),
+    seq(
+      optional($.table_cell_attr),
+      choice(
+        seq(
+          choice('|', '¦'),
+          token.immediate(/\r?\n/),
+          anySep(
+            alias($._section_block, $.section_block),
+            $.list_continuation,
           ),
-          seq(choice('|', '¦'), $.table_cell_content),
         ),
+        seq(choice('|', '¦'), $.table_cell_content),
       ),
     ),
   table_cell_content: $ => repeat1(choice(/[^|¦]/, '\\|', '\\¦')),

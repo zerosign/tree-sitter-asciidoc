@@ -21,6 +21,7 @@ module.exports = grammar({
     [$._section3],
     [$._section4],
     [$._section5],
+    [$.table_cell],
   ],
 
   rules: {
