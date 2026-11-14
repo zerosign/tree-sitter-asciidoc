@@ -56,7 +56,8 @@ typedef enum TokenType {
     TOKEN_TERM,
     TOKEN_DESCRIPTION_MARKER,
     TOKEN_SETEXT_TITLE_H0_MARKER,
-    TOKEN_ASCIIDOC_CELL_ATTR
+    TOKEN_ASCIIDOC_CELL_ATTR,
+    TOKEN_NTABLE_CELL_ATTR
 } TokenType;
 
 static inline bool parse_table_attr(TSLexer *lexer, bool *is_asciidoc);

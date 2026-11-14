@@ -75,7 +75,7 @@ exports.rules = {
     ),
   ntable_cell: $ =>
     seq(
-      optional($.table_cell_attr),
+      optional(alias($.ntable_cell_attr, $.table_cell_attr)),
       choice(
         seq(
           '!',
