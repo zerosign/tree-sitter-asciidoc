@@ -3231,24 +3231,7 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[^|¦\\r\\n]"
-            },
-            {
-              "type": "STRING",
-              "value": "\\|"
-            },
-            {
-              "type": "STRING",
-              "value": "\\¦"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
+          "type": "REPEAT1",
           "content": {
             "type": "PATTERN",
             "value": "[^\\r\\n]"
