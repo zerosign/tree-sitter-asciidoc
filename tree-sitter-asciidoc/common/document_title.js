@@ -3,6 +3,7 @@ const { anySep1, escaped_ch } = require('../../common/common');
 exports.rules = {
   document_title: $ =>
     seq(
+      optional($._block_attrs),
       $.title_h0_marker,
       $._WHITE_SPACE,
       $.line,
