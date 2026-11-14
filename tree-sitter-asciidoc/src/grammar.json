@@ -1100,6 +1100,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "ntable_block"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "block_macro"
                 }
               ]
             }

@@ -1315,6 +1315,10 @@
       "required": true,
       "types": [
         {
+          "type": "block_macro",
+          "named": true
+        },
+        {
           "type": "ntable_block",
           "named": true
         },
