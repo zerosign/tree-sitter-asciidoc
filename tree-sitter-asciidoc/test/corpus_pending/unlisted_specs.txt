@@ -397,3 +397,45 @@ Content.
       (section_block
         (paragraph
           (line))))))
+
+==================================================
+AsciiDoc style cell with inline start and delimited block
+==================================================
+
+|===
+a| *Unencrypted*: 8091
+
+[NOTE]
+====
+A note inside inline cell.
+====
+| Next cell
+|===
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section_block
+      (table_block
+        (table_block_marker)
+        (table_cell
+          (table_cell_attr)
+          (section_block
+            (paragraph
+              (line)))
+          (section_block
+            (element_attr
+              (element_attr_marker)
+              (positional_attr
+                (block_style))
+              (element_attr_marker))
+            (delimited_block
+              (delimited_block_start_marker)
+              (section_block
+                (paragraph
+                  (line)))
+              (delimited_block_end_marker))))
+        (table_cell
+          (table_cell_content))
+        (table_block_marker)))))
