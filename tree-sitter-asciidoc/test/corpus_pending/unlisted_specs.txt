@@ -371,3 +371,29 @@ Content.
     (section_block
       (paragraph
         (line)))))
+
+==================================================
+Block attribute ID with spaces
+==================================================
+
+[#Node Quantity]
+== Node Quantity
+
+Content.
+
+--------------------------------------------------
+
+(document
+  (block_element
+    (section
+      (element_attr
+        (element_attr_marker)
+        (positional_attr
+          (id))
+        (element_attr_marker))
+      (title1
+        (title_h1_marker)
+        (line))
+      (section_block
+        (paragraph
+          (line))))))
