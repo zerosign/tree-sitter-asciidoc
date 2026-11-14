@@ -351,7 +351,12 @@ module.exports = grammar({
         $._block_end,
       ),
 
-    line: $ => seq(/[^\r\n]+/, $._block_end),
+    line: $ =>
+      seq(
+        choice(/[^|¦\r\n]/, '\\|', '\\¦'),
+        repeat(/[^\r\n]/),
+        $._block_end,
+      ),
     paragraph: $ =>
       prec.left(prec(-1, seq(repeat1($.line), optional($.quoted_line)))),
     quoted_line: $ =>

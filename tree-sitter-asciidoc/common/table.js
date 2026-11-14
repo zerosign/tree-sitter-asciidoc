@@ -50,10 +50,7 @@ exports.rules = {
         seq(
           choice('|', '¦'),
           token.immediate(/\r?\n/),
-          anySep(
-            alias($._section_block, $.section_block),
-            $.list_continuation,
-          ),
+          repeat(choice($.section_block, $.list_continuation)),
         ),
         seq(choice('|', '¦'), $.table_cell_content),
       ),
