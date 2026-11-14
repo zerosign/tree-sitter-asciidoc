@@ -21,6 +21,7 @@ module.exports = grammar({
     [$._section3],
     [$._section4],
     [$._section5],
+    [$._block_attrs],
     [$.table_cell],
   ],
 
@@ -61,6 +62,7 @@ module.exports = grammar({
         repeat(
           choice(
             $._section_comment,
+            $.document_attr,
             alias($._doc_block, $.section_block),
             alias($._section2, $.section),
             alias($._section3, $.section),
@@ -76,6 +78,7 @@ module.exports = grammar({
         repeat(
           choice(
             $._section_comment,
+            $.document_attr,
             alias($._doc_block, $.section_block),
             alias($._section3, $.section),
             alias($._section4, $.section),
@@ -90,6 +93,7 @@ module.exports = grammar({
         repeat(
           choice(
             $._section_comment,
+            $.document_attr,
             alias($._doc_block, $.section_block),
             alias($._section4, $.section),
             alias($._section5, $.section),
@@ -103,6 +107,7 @@ module.exports = grammar({
         repeat(
           choice(
             $._section_comment,
+            $.document_attr,
             alias($._doc_block, $.section_block),
             alias($._section5, $.section),
           ),
@@ -112,7 +117,7 @@ module.exports = grammar({
       seq(
         optional($._block_attrs),
         $.title5,
-        repeat(choice($._section_comment, alias($._doc_block, $.section_block))),
+        repeat(choice($._section_comment, $.document_attr, alias($._doc_block, $.section_block))),
       ),
 
     _section_comment: $ => choice($.line_comment, $.block_comment),
@@ -124,7 +129,7 @@ module.exports = grammar({
     _block_attrs: $ =>
       seq(
         choice($.element_attr, $.block_title),
-        repeat(choice($.element_attr, $.block_title, $._section_comment)),
+        repeat(choice($.element_attr, $.block_title, $._section_comment, $.document_attr)),
       ),
 
     // A document-level content block (no section heading).
@@ -134,7 +139,7 @@ module.exports = grammar({
     // Container blocks (delimited/open/sidebar/quote/table cells) keep the flat
     // `section_block`, which may still hold a (discrete) heading.
     section_block: $ =>
-      choice($._section_block_para, $._section_block, $._section_comment),
+      choice($._section_block_para, $._section_block, $._section_comment, $.document_attr),
     _section_block_para: $ =>
       seq(optional($._block_attrs), $.paragraph),
     _section_block: $ =>
