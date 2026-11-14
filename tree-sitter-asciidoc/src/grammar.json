@@ -2541,7 +2541,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_attr_word"
+                "name": "_id_word"
               },
               "named": true,
               "value": "id"
@@ -2834,6 +2834,13 @@
           "value": "="
         }
       ]
+    },
+    "_id_word": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^,=#.%\\]\"'\\r\\n]+"
+      }
     },
     "_attr_word": {
       "type": "TOKEN",
