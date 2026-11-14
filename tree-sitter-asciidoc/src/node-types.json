@@ -1126,6 +1126,10 @@
           "named": true
         },
         {
+          "type": "document_attr",
+          "named": true
+        },
+        {
           "type": "element_attr",
           "named": true
         },
@@ -1202,6 +1206,10 @@
         },
         {
           "type": "description_list",
+          "named": true
+        },
+        {
+          "type": "document_attr",
           "named": true
         },
         {
