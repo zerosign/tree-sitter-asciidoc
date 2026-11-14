@@ -40,6 +40,7 @@ dist/
 docs/site
 nvim.log
 vendor/
+.infigraph/
 
 
 # Added by cargo

@@ -16,13 +16,17 @@ corpus_path = "tree-sitter-asciidoc/test/corpus_pending/unlisted_specs.txt"
 with open(corpus_path, "r", encoding="utf-8") as f:
     raw = f.read()
 
-# Pattern for tree-sitter corpus tests:
-# ===+\nNAME\n===+\nINPUT\n---+\nOUTPUT
 pattern = r'=+\n(.*?)\n=+\n(.*?)\n-+\n(.*?)(?=\n=+|\Z)'
 matches = re.findall(pattern, raw, re.DOTALL)
 
+def normalize_cst(s):
+    # remove range annotations like [0, 0] - [1, 0]
+    s = re.sub(r'\s*\[\d+,\s*\d+\]\s*-\s*\[\d+,\s*\d+\]', '', s)
+    lines = [line.rstrip() for line in s.strip().split('\n') if line.strip()]
+    return '\n'.join(lines)
+
 print(f"\n--- Pending Unlisted Specs Catalog ({len(matches)} tests) ---")
-failed = 0
+passed = 0
 for name, source_code, expected_cst in matches:
     name = name.strip()
     source_code = source_code.strip() + "\n"
@@ -32,10 +36,19 @@ for name, source_code, expected_cst in matches:
     
     has_error = "(ERROR" in proc.stdout or "(MISSING" in proc.stdout or proc.returncode != 0
     if has_error:
-        print(f"  ❌ [FAILING] {name}")
-        failed += 1
+        print(f"  ❌ [ERROR] {name}")
     else:
-        print(f"  ⚠️ [DIFF/UNCONFIRMED] {name}")
+        actual_norm = normalize_cst(proc.stdout)
+        expected_norm = normalize_cst(expected_cst)
+        if actual_norm == expected_norm:
+            print(f"  ✅ [MATCH] {name}")
+            passed += 1
+        else:
+            print(f"  ⚠️ [DIFF]  {name}")
+            print("   --- Expected:")
+            print("   " + "\n   ".join(expected_norm.split("\n")[:6]))
+            print("   --- Actual:")
+            print("   " + "\n   ".join(actual_norm.split("\n")[:6]))
 
-print(f"\nSummary: {failed} failing with syntax errors, {len(matches) - failed} parsed without syntax error\n")
+print(f"\nSummary: {passed}/{len(matches)} matching expected CST\n")
 EOF

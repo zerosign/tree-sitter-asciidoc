@@ -55,7 +55,8 @@ Content.
           (lastname)
           (email)))
       (line_comment
-        (line_comment_marker))
+        (line_comment_marker)
+        (body))
       (document_attr
         (document_attr_marker)
         (attr_name)
